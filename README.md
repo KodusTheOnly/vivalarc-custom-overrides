@@ -6,6 +6,9 @@ i built these tweaks around [ragnarokxg/VivalArc](https://github.com/ragnarokxg/
 
 This repository only contains my own overrides. It does not redistribute the original VivalArc files.
 
+## Preview
+
+![VivalArc custom overrides preview](screenshots/preview.png)
 ## Why i made this
 
 Before moving to Vivaldi, i used **Zen Browser** and really liked the way it handled vertical tabs, pinned tabs, compact navigation, and screen space in general.
