@@ -68,6 +68,11 @@ The override hides it on regular pages and shows it when the active page is the 
 
 i also removed the extra left and bottom margins around the webpage area so websites can use more of the available window.
 
+### Accordion Tab Stack support
+
+i fixed the Accordion Tab Stack toggle so it works correctly with the custom pinned-tab grid.
+
+The toggle arrow stays aligned in both expanded and collapsed states without creating the spacing issues caused by VivalArc's global tab positioning rules.
 ## Requirements
 
 You'll need:
