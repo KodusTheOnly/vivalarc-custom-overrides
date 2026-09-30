@@ -168,6 +168,83 @@
 
 
 /* =========================================================
+   ACCORDION TAB STACK - GRID TOGGLE ROW
+   ========================================================= */
+
+/*
+   VivalArc removes .tab-position boxes with display: contents
+   and lays out tab wrappers in a grid.
+
+   Accordion toggle arrows are direct children of .tab-strip.
+   Their native --PositionX and --PositionY values describe
+   Vivaldi's original tab layout, not the customized grid.
+   Using those coordinates places the toggle over other tabs.
+
+   Restore only the toggle box as a full-width grid row.
+   Keep its native height and DOM order below the stack.
+*/
+
+#browser:is(.tabs-left, .tabs-right)
+.tab-position.accordion-toggle-arrow {
+    display: flex !important;
+
+    position: relative !important;
+
+    left: auto !important;
+    top: auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+
+    height: var(--Height) !important;
+    min-height: var(--Height) !important;
+    max-height: var(--Height) !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+
+    z-index: var(--ZIndex) !important;
+
+    background: transparent !important;
+
+    box-sizing: border-box !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    grid-column: 1 / -1 !important;
+    grid-row: auto !important;
+}
+
+
+/*
+   The inspected native SVG is 10 by 10 pixels.
+   Keep its wrapper compact: Vivaldi rotates this wrapper
+   to indicate expanded or collapsed state. A strip-wide
+   wrapper rotated by 90 degrees extends across other rows.
+   Preserve Vivaldi's directional transforms.
+*/
+
+#browser:is(.tabs-left, .tabs-right)
+.tab-position.accordion-toggle-arrow
+> span {
+    width: 10px !important;
+    height: 10px !important;
+    flex: 0 0 auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+
+/* =========================================================
    PINNED TABS — RESPONSIVE GRID
    ========================================================= */
 
