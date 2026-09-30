@@ -1,0 +1,395 @@
+/* =========================================================
+              VivalArc Custom Overrides
+   ========================================================= */
+
+
+/* =========================================================
+   WEBPAGE — REMOVE LEFT/BOTTOM FRAME
+   ========================================================= */
+
+/*
+   Confirmed through DevTools:
+   #webpage-stack was receiving:
+
+   margin-left: 6px;
+   margin-bottom: 6px;
+
+   These margins created the visible strip on the left
+   and bottom sides of the webpage.
+*/
+
+#browser:is(.tabs-left, .tabs-right)
+#webpage-stack {
+    margin: 0 !important;
+}
+
+
+/* =========================================================
+   TAB BAR — RESPONSIVE CONTAINER
+   ========================================================= */
+
+#tabs-tabbar-container {
+    container-type: inline-size;
+    container-name: tabbar;
+}
+
+
+/* =========================================================
+   TAB BAR — HEIGHT AND SCROLLING
+   ========================================================= */
+
+/*
+   Vivaldi dynamically applies a max-height value to
+   the internal .resize container.
+
+   This caused the scrollbar to appear before the tab list
+   had actually used all available vertical space.
+
+   Removing that restriction allows the tab list to expand
+   normally before scrolling becomes necessary.
+*/
+
+#browser:is(.tabs-left, .tabs-right)
+#tabs-container > .resize {
+    max-height: none !important;
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
+}
+
+
+/*
+   Reference container used for positioning the New Tab button.
+*/
+
+#browser:is(.tabs-left, .tabs-right)
+#tabs-container {
+    position: relative !important;
+    --newtab-fallback-top: 64px;
+}
+
+
+/* =========================================================
+   NEW TAB BUTTON — ANCHOR + FALLBACK
+   ========================================================= */
+
+/*
+   The separator between pinned and normal tabs is used
+   as the preferred positioning anchor for the New Tab button.
+
+   Additional bottom spacing is reserved so normal tabs
+   do not overlap the button.
+*/
+
+#browser:is(.tabs-left, .tabs-right)
+.tab-strip > .separator {
+    anchor-name: --kodus-tab-separator;
+    margin-bottom: 34px !important;
+}
+
+
+/*
+   The real New Tab button is located inside
+   .toolbar-tabbar-after rather than inside .tab-strip.
+
+   CSS Anchor Positioning keeps it attached to the separator
+   whenever possible.
+
+   The fallback value keeps the button visible if the anchor
+   is temporarily unavailable.
+*/
+
+#browser:is(.tabs-left, .tabs-right)
+#tabs-container > .toolbar-tabbar-after {
+    position: absolute !important;
+
+    top: anchor(
+        --kodus-tab-separator bottom,
+        var(--newtab-fallback-top)
+    ) !important;
+
+    left: 0 !important;
+    right: 0 !important;
+
+    width: 100% !important;
+    height: 32px !important;
+
+    z-index: 10 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+}
+
+
+/* Remove the internal flexible toolbar spacer */
+
+#browser:is(.tabs-left, .tabs-right)
+#tabs-container
+> .toolbar-tabbar-after
+> .toolbar-spacer-flexible {
+    display: none !important;
+}
+
+
+/* New Tab button container */
+
+#browser:is(.tabs-left, .tabs-right)
+#tabs-container
+> .toolbar-tabbar-after
+> .newtab {
+    width: 100% !important;
+    height: 32px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    flex: 1 1 auto !important;
+}
+
+
+/* New Tab button */
+
+#browser:is(.tabs-left, .tabs-right)
+#tabs-container
+> .toolbar-tabbar-after
+> .newtab
+> button {
+    width: 100% !important;
+    height: 32px !important;
+
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+
+/* =========================================================
+   PINNED TABS — RESPONSIVE GRID
+   ========================================================= */
+
+/*
+   Default layout:
+   3 pinned tabs per row.
+*/
+
+#browser {
+    --pinned-column-count: 3 !important;
+}
+
+
+#browser .tab-strip {
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr)) !important;
+}
+
+
+/* =========================================================
+   MEDIUM SIDEBAR — 2 COLUMNS
+   ========================================================= */
+
+@container tabbar (max-width: 115px) {
+
+    #browser .tab-strip {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr)) !important;
+    }
+
+
+    /*
+       Fallback position used only if the separator anchor
+       cannot be resolved.
+    */
+
+    #browser:is(.tabs-left, .tabs-right)
+    #tabs-container {
+        --newtab-fallback-top: 112px;
+    }
+}
+
+
+/* =========================================================
+   COMPACT SIDEBAR — 1 COLUMN
+   ========================================================= */
+
+@container tabbar (max-width: 75px) {
+
+    #browser .tab-strip {
+        grid-template-columns: 1fr !important;
+    }
+
+
+    /*
+       New Tab fallback position for compact mode.
+    */
+
+    #browser:is(.tabs-left, .tabs-right)
+    #tabs-container {
+        --newtab-fallback-top: 126px;
+    }
+
+
+    /*
+       VivalArc normally uses a square aspect ratio
+       for pinned tabs.
+
+       In compact mode this consumes too much vertical space,
+       so pinned tabs become fixed-height rows instead.
+    */
+
+    #browser
+    .tab-position.is-pinned > .tab-wrapper {
+        aspect-ratio: auto !important;
+
+        height: 32px !important;
+        min-height: 32px !important;
+        max-height: 32px !important;
+    }
+
+
+    #browser
+    .tab-position.is-pinned .tab,
+    #browser .tab.pinned {
+        height: 32px !important;
+        min-height: 32px !important;
+        max-height: 32px !important;
+    }
+}
+
+
+/* Prevent pinned tabs from overflowing */
+
+#browser
+.tab-position.is-pinned > .tab-wrapper {
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
+
+
+/* Keep pinned-tab favicons stable */
+
+#browser
+.tab-position.is-pinned .favicon {
+    flex-shrink: 0 !important;
+}
+
+
+/* =========================================================
+   NORMAL TABS — RESPONSIVE
+   ========================================================= */
+
+/*
+   Allow normal tabs to shrink together with the sidebar
+   instead of overflowing outside the available space.
+*/
+
+#browser
+.tab-position:not(.is-pinned) > .tab-wrapper,
+
+#browser
+.tab-position:not(.is-pinned) .tab,
+
+#browser
+.tab-position:not(.is-pinned) .tab-header {
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+
+/* Prevent normal tab contents from leaving the sidebar */
+
+#browser
+.tab-position:not(.is-pinned) > .tab-wrapper {
+    overflow: hidden !important;
+}
+
+
+/* Truncate long tab titles normally */
+
+#browser
+.tab-position:not(.is-pinned) .title {
+    min-width: 0 !important;
+
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+
+/* =========================================================
+   NORMAL TABS — COMPACT MODE
+   ========================================================= */
+
+@container tabbar (max-width: 75px) {
+
+    /* Hide tab titles */
+
+    #browser
+    .tab-position:not(.is-pinned) .title {
+        display: none !important;
+    }
+
+
+    /* Hide close buttons */
+
+    #browser
+    .tab-position:not(.is-pinned) .close {
+        display: none !important;
+    }
+
+
+    /* Center normal tab contents */
+
+    #browser
+    .tab-position:not(.is-pinned) .tab-header {
+        justify-content: center !important;
+
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+
+        margin: 0 !important;
+    }
+
+
+    /* Center and stabilize favicons */
+
+    #browser
+    .tab-position:not(.is-pinned) .favicon {
+        flex-shrink: 0 !important;
+        margin: 0 !important;
+    }
+}
+
+
+/* =========================================================
+   BOOKMARK BAR — START PAGE ONLY
+   ========================================================= */
+
+/*
+   Hide the Bookmark Bar on normal webpages.
+*/
+
+#browser .bookmark-bar {
+    display: none !important;
+}
+
+
+/*
+   Show the Bookmark Bar only when the currently active
+   and visible webpage is Vivaldi's Start Page.
+
+   DOM structure confirmed through DevTools:
+
+   .webpageview.active.visible
+       └── .internal-page
+           └── .startpage
+*/
+
+#browser:has(
+    #webpage-stack > .webpageview.active.visible .startpage
+) .bookmark-bar {
+    display: flex !important;
+}
